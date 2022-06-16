@@ -15,7 +15,7 @@ jobs:
     
     - name: Sync
       env:
-        dest: 'cloudamus.host@ssh.gb.stackcp.com:/public_html/floressquad'
+        dest: 'cloudamus.host@ssh.gb.stackcp.com:public_html/floressquad'
       run: |
         echo "${{secrets.DEPLOY_KEY}}" > deploy_key
         chmod 600 ./deploy_key
