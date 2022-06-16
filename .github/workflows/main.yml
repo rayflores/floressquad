@@ -1,0 +1,39 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deployment
+
+on:
+  push:
+    branches: [ production ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Sync
+      env:
+        dest: 'cloudamus.host@ssh.gb.stackcp.com:/public_html/floressquad'
+      run: |
+        echo "${{secrets.DEPLOY_KEY}}" > deploy_key
+        chmod 600 ./deploy_key
+        rsync -chav --delete \
+          -e 'ssh -i ./deploy_key -o StrictHostKeyChecking=no' \
+          --exclude /deploy_key \
+          --exclude /.git/ \
+          --exclude /.github/ \
+          --exclude /wp-admin/ \
+          --exclude /wp-content/index.php \
+          --exclude /wp-admin/ \
+          --exclude /wp-content/languages \
+          --exclude /wp-content/plugins/index.php \
+          --exclude /wp-content/themes/index.php \
+          --exclude /wp-includes/ \
+          --exclude /index.php \
+          --exclude /license.txt \
+          --exclude /readme.html \
+          --exclude /wp-*.php \
+          --exclude /xmlrpc.php \
+          ./ ${{env.dest}}
